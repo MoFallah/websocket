@@ -16,6 +16,9 @@ function getMessage() {
 }
 
 function sendMessage() {
+  if (!inputBox.value || !ws) {
+    return;
+  }
   ws.send(getMessage());
   makeNewResult(`Message is sent : ${message}`);
 }
@@ -43,7 +46,7 @@ function startWebSocket() {
       return;
     }
     ws.onopen = function () {
-      sendMessage();
+      makeNewResult("Socket is started!");
     };
     ws.onmessage = function (evt) {
       var received_msg = evt.data;
@@ -62,10 +65,11 @@ function startWebSocket() {
 }
 
 function stopWebSocket() {
-  if (getState() === 3) {
+  if (getState() === ws.CLOSED) {
     makeNewResult("There is no web socket running!");
     return;
   }
   ws.close();
+  ws = undefined;
   clearInputBox();
 }
